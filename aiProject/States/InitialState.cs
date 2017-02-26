@@ -11,7 +11,7 @@ namespace RealAI
     {
 
         [EventListener]
-        public void testOnEvent(OnGetShotEvent e)
+        public void testOnEvent(SampleEvent e)
         {
             Console.Out.WriteLine(e.msg);
         }

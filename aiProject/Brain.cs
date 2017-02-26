@@ -21,13 +21,24 @@ namespace RealAI {
         public PlayerAction tick(FeatureVector vector)
         {
             triggerEvents(vector);
-            
-            return PlayerAction.Prepare;
+            //States return the next state; this is an infinite stream of states;
+            PlayerAction action = PlayerAction.Prepare; //This is ALWAYS better than doing nothing
+            State nextState = currentState.tick(ref action, vector, this);
+            if(nextState == null)
+            {
+                //WTF, why don't you read the first comment even?
+                nextState = new InitialState(); //Try to recover
+            }
+            currentState = nextState;
+            return action; //This was passed by reference, so it should be updated by now
         }
 
+        public State getCurrentState() { return currentState; }
+
+        //Events will be prioritized by order of registration
         private void registerEvents()
-        { //Events will be prioritized by order of registration
-            eventListeners.Add(new OnGetShotEventListener());
+        { 
+            eventListeners.Add(new SampleEventListener());
         }
 
         private void triggerEvents(FeatureVector vector)
@@ -36,12 +47,25 @@ namespace RealAI {
             {
                 Event eventTriggered = e.trigger(vector, this);
                 if(eventTriggered != null) {
-                    State newState = triggerCurrentStateEvent(eventTriggered, vector);
+                    //Trigger the event on the current state, if the current state has a listener for it
+                    //This is reasonable, because if it listens for it, it assumes responsibility for it
+                    //IFF it returns a new state
+                    State newState = null; 
+                    newState = triggerCurrentStateEvent(eventTriggered, vector);
                     if(newState != null)
                     {
                         currentState = newState;
                         return;
                     }
+                    //Trigger the global event, this will happen IFF the current state
+                    //did not return a new state
+                    newState = eventTriggered.onTrigger(vector, this);
+                    if (newState != null)
+                    {
+                        currentState = newState;
+                        return;
+                    }
+                    //If this also returns null, try the next event
                 }
             }
         }
@@ -69,6 +93,7 @@ namespace RealAI {
                             }
                             else
                             {
+                                m.Invoke(currentState, new object[] { triggerEvent });
                                 return null;
                             }
                         }

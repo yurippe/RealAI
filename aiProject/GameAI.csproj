@@ -49,7 +49,7 @@
     <Compile Include="Events\EventListener.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="EventListenerAttribute.cs" />
-    <Compile Include="Events\OnGetShotEvent.cs" />
+    <Compile Include="Events\SampleEvent.cs" />
     <Compile Include="States\InitialState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="States\State.cs" />

@@ -8,24 +8,28 @@ using Torque3D.Util;
 namespace RealAI.Events
 {
 
-    class OnGetShotEventListener : EventListener
+    class SampleEventListener : EventListener
     {
 
         public Event trigger(FeatureVector vector, Brain brain)
         {
-            return new OnGetShotEvent("hello from event");
+            return new SampleEvent("hello from event");
         }
 
     }
 
-    class OnGetShotEvent : Event
+    class SampleEvent : Event
     {
         public string msg { get; }
 
-        public OnGetShotEvent(string message)
+        public SampleEvent(string message)
         {
             msg = message;
         }
 
+        public State onTrigger(FeatureVector vector, Brain brain)
+        {
+            return null;
+        }
     }
 }

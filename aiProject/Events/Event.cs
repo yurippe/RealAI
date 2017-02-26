@@ -3,9 +3,9 @@ using Torque3D.Util;
 
 namespace RealAI
 {
-    interface Event
+    public interface Event
     {
-        
+        State onTrigger(FeatureVector vector, Brain brain);
     }
 
 }

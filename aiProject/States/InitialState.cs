@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Torque3D.Engine.Util.Enums;
 using Torque3D.Util;
 
-namespace RealAI
+namespace RealAI.States
 {
     [PreservePrepareMove]
     class InitialState : State

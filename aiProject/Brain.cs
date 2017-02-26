@@ -12,6 +12,11 @@ namespace RealAI {
         private List<EventListener> eventListeners = new List<EventListener>();
         private State currentState = new InitialState();
 
+        private bool _hasPrepareMove = false;
+        private int _lastPrepareTick = -1;
+
+        private FeatureVector currentVector;
+        private FeatureVector previousVector;
 
         public Brain()
         {
@@ -20,9 +25,14 @@ namespace RealAI {
 
         public PlayerAction tick(FeatureVector vector)
         {
-            triggerEvents(vector);
+            currentVector = vector;
+            triggerEvents();
             //States return the next state; this is an infinite stream of states;
             PlayerAction action = PlayerAction.Prepare; //This is ALWAYS better than doing nothing
+
+            //Deal with caching prepareMove
+            if(preservePrepare(currentState) && isPreparedMove()) { previousVector = vector; _lastPrepareTick = vector.TickCount; return PlayerAction.Prepare; }
+
             State nextState = currentState.tick(ref action, vector, this);
             if(nextState == null)
             {
@@ -30,10 +40,29 @@ namespace RealAI {
                 nextState = new InitialState(); //Try to recover
             }
             currentState = nextState;
+
+            //If by this step the action is to prepare, we know we have a prepare for next round
+            if(action == PlayerAction.Prepare)
+            {
+                _lastPrepareTick = vector.TickCount;
+                _hasPrepareMove = true;
+            }
+            else if (_hasPrepareMove && _lastPrepareTick != vector.TickCount)
+            {
+                _hasPrepareMove = false;
+            }
+            previousVector = currentVector;
             return action; //This was passed by reference, so it should be updated by now
         }
 
         public State getCurrentState() { return currentState; }
+        public FeatureVector getCurrentVector() { return currentVector;  }
+        //return the first vector as the previous if it is the first tick, this works for most cases
+        public FeatureVector getPreviousVector() { return currentVector.TickCount == 1 ? currentVector : previousVector; } 
+
+        //The prepare move is defined as the first of the 2 moves
+        public bool isPreparedMove() { return _hasPrepareMove && getCurrentVector().TickCount != 1 && getCurrentVector().TickCount != getPreviousVector().TickCount; }
+        public bool hasCachedPrepareMove() { return _hasPrepareMove; }
 
         #region Set up
 
@@ -47,18 +76,18 @@ namespace RealAI {
 
 
 
-        private void triggerEvents(FeatureVector vector)
+        private void triggerEvents()
         {
-            if(vector.TickCount == 1) { return; } //simple hack to avoid having lastVector = null, skip first tick.
+            if(currentVector.TickCount == 1) { return; } //simple hack to avoid having lastVector = null, skip first tick.
             foreach (EventListener e in eventListeners)
             {
-                Event eventTriggered = e.trigger(vector, this);
+                Event eventTriggered = e.trigger(currentVector, this);
                 if(eventTriggered != null) {
                     //Trigger the event on the current state, if the current state has a listener for it
                     //This is reasonable, because if it listens for it, it assumes responsibility for it
                     //IFF it returns a new state
                     State newState = null; 
-                    newState = triggerCurrentStateEvent(eventTriggered, vector);
+                    newState = triggerCurrentStateEvent(eventTriggered);
                     if(newState != null)
                     {
                         currentState = newState;
@@ -66,7 +95,7 @@ namespace RealAI {
                     }
                     //Trigger the global event, this will happen IFF the current state
                     //did not return a new state
-                    newState = eventTriggered.onTrigger(vector, this);
+                    newState = eventTriggered.onTrigger(currentVector, this);
                     if (newState != null)
                     {
                         currentState = newState;
@@ -77,11 +106,11 @@ namespace RealAI {
             }
         }
 
-        private State triggerCurrentStateEvent(Event triggerEvent, FeatureVector vector)
+        private State triggerCurrentStateEvent(Event triggerEvent)
         {
 
-            System.Type eListenerType = typeof(EventListenerAttribute);
-            System.Type eStateType = typeof(State);
+            Type eListenerType = typeof(EventListenerAttribute);
+            Type eStateType = typeof(State);
 
             foreach (System.Reflection.MethodInfo m in currentState.GetType().GetMethods())
             {
@@ -112,6 +141,16 @@ namespace RealAI {
             }
             return null;
         }
+
+        private bool preservePrepare(State s)
+        {
+            Type ePreserveType = typeof(PreservePrepareMove);
+            if(s.GetType().GetCustomAttributes(ePreserveType, false).Length > 0)
+            {
+                return true;
+            }
+            return false;
+        } 
 
 
     }

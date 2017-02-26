@@ -35,14 +35,21 @@ namespace RealAI {
 
         public State getCurrentState() { return currentState; }
 
+        #region Set up
+
         //Events will be prioritized by order of registration
         private void registerEvents()
         { 
-            eventListeners.Add(new SampleEventListener());
+            eventListeners.Add(new HighChanceOfHitEventListener());
         }
+
+        #endregion
+
+
 
         private void triggerEvents(FeatureVector vector)
         {
+            if(vector.TickCount == 1) { return; } //simple hack to avoid having lastVector = null, skip first tick.
             foreach (EventListener e in eventListeners)
             {
                 Event eventTriggered = e.trigger(vector, this);

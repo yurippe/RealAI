@@ -9,7 +9,7 @@ using Torque3D.Util;
 
 namespace RealAI
 {
-    //[PreservePrepareMove]
+    [PreservePrepareMove]
     class InitialState : State
     {
         private bool b = true;

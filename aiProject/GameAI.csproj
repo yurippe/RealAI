@@ -51,6 +51,7 @@
     <Compile Include="Attributes.cs" />
     <Compile Include="Events\HighChanceOfHitEvent.cs" />
     <Compile Include="Events\SampleEvent.cs" />
+    <Compile Include="MapManager.cs" />
     <Compile Include="States\DebugState.cs" />
     <Compile Include="States\InitialState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

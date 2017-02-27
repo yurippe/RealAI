@@ -29,9 +29,9 @@ namespace RealAI {
         private void Reset()
         {
             eventListeners = new List<EventListener>();
-            currentState = new InitialState(); //Reset our states
+            currentState = new DebugState(); //Reset our states
             registerEvents();
-            mapManager = new MapManager(); //Reset the map
+            mapManager = new MapManager(tickModulus: 32); //Reset the map
             //Reset fields
             _hasPrepareMove = false;
             _lastPrepareTick = -1;

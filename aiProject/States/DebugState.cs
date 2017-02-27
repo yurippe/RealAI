@@ -12,8 +12,21 @@ namespace RealAI.States
     {
         public State tick(ref PlayerAction action, FeatureVector vector, Brain brain)
         {
-            //Console.Out.WriteLine(vector.TickCount);
-            action = PlayerAction.Prepare;
+            if (vector.TickCount == 1) { Console.WriteLine(vector.DeltaMovedX + ", " + vector.DeltaMovedY + "," + vector.DeltaRot); }
+            action = PlayerAction.TurnRight;
+            return this;
+            int i = (new Random()).Next(4);
+            if(i == 0)
+            {
+                action = PlayerAction.MoveForward;
+            } else if (i == 1)
+            {
+                action = PlayerAction.TurnLeft;
+            } else if (i == 2 || i == 3)
+            {
+                action = PlayerAction.TurnRight;
+            }
+            
             return this;
         }
     }

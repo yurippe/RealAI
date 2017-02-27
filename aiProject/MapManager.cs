@@ -70,8 +70,6 @@ namespace RealAI
             //Update player position and rotation:
             X += v.DeltaMovedX;
             Y += v.DeltaMovedY;
-            if (tickMod > 0 && v.TickCount % tickMod == 0)
-            { Console.Out.Write("Distance Left: " + v.DistanceToObstacleLeft); }
             Gamma += v.DeltaRot;
             if(Gamma < 0)
             {

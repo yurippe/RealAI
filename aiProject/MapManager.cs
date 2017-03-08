@@ -18,7 +18,7 @@ namespace RealAI
         int size;
         int tickMod;
 
-        public MapManager(int size = 26, int tickModulus = 0)
+        public MapManager(int size = 50, int tickModulus = 0)
         {
             X = 0.0f; Y = 0.0f; Gamma = 0.0f;
             this.size = size;

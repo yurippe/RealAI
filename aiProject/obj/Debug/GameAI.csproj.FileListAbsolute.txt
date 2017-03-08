@@ -1,0 +1,5 @@
+C:\Users\Kristian\Desktop\RealAI\aiLibs\RealAI.dll
+C:\Users\Kristian\Desktop\RealAI\aiLibs\RealAI.pdb
+C:\Users\Kristian\Desktop\RealAI\aiProject\obj\Debug\GameAI.csprojResolveAssemblyReference.cache
+C:\Users\Kristian\Desktop\RealAI\aiProject\obj\Debug\RealAI.dll
+C:\Users\Kristian\Desktop\RealAI\aiProject\obj\Debug\RealAI.pdb

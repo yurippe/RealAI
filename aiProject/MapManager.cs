@@ -46,12 +46,12 @@ namespace RealAI
             return map[x, y];
         }
 
-        private void setElement(double x_coordinate, double y_coordinate, MapElement e, bool onlyIfUnknow = true)
+        private void setElement(double x_coordinate, double y_coordinate, MapElement e, bool onlyIfUnknown = true)
         {
             int x = (int)x_coordinate; int y = (int)y_coordinate;
             x += size; y += size;
             if (x >= size * 2 || y >= size * 2 || y < 0 || x < 0) { Console.Out.Write("Error in setElement in mapManager (" + x + "," + y + ")");  return; } //Fail gracefully
-            if (onlyIfUnknow)
+            if (onlyIfUnknown)
             {
                 if (map[x, y] is Unknown)
                 {
@@ -63,6 +63,11 @@ namespace RealAI
                 map[x, y] = e;
             }
 
+        }
+
+        public List<Tile> pathfindFromTo(double xFrom, double yFrom, double xTo, double yTo)
+        {
+            return null;
         }
 
         public void tick(FeatureVector v, Brain b)
@@ -167,6 +172,34 @@ namespace RealAI
         }
     }
 
+    public enum TileType { Walkable, Obstacle, Unknown, OutOfMap };
+
+    public class Tile //This is the class that holds the map element, so we can get "onUpdate" events
+    {
+        private TileType mapElement;
+        
+        Tile(TileType e)
+        {
+            this.mapElement = e;
+        }
+
+        public string getCharRepresentation()
+        {
+            switch (mapElement)
+            {
+                case TileType.Unknown: return "?";
+                case TileType.Walkable: return " ";
+                case TileType.OutOfMap: return " ";
+                case TileType.Obstacle: return "X";
+                default: return "#";
+            }
+        }
+
+        public void changeType(TileType changeTo)
+        {
+
+        }
+    }
 
     interface MapElement
     {
